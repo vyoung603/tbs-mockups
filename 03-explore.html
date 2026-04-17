@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TBS - Explore</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #e8e4e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  /* Device frame */
+  .device {
+    width: 402px;
+    height: 874px;
+    background: #1a1a1a;
+    border-radius: 48px;
+    padding: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 24px 0;
+    flex-shrink: 0;
+  }
+
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Scrollable content */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 100px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 20px 12px;
+    background: #fff;
+  }
+  .header h1 {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: -0.3px;
+  }
+  .header-icons { display: flex; gap: 16px; }
+  .header-icons svg {
+    width: 22px;
+    height: 22px;
+    stroke: #1a1a1a;
+    stroke-width: 1.8;
+    fill: none;
+    cursor: pointer;
+  }
+
+  /* Topic pills */
+  .topics {
+    display: flex;
+    gap: 10px;
+    padding: 8px 20px 20px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-shrink: 0;
+    background: #fff;
+  }
+  .topics::-webkit-scrollbar { display: none; }
+  .pill {
+    flex-shrink: 0;
+    padding: 8px 18px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .pill.active {
+    background: #004455;
+    color: #fff;
+    border: 1.5px solid #004455;
+  }
+  .pill:not(.active) {
+    background: transparent;
+    color: #004455;
+    border: 1.5px solid #c0cdd2;
+  }
+
+  /* Section titles */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 4px 20px 14px;
+  }
+  .section-header h2 {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+  .section-header .see-all {
+    font-size: 14px;
+    color: #46b2b8;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Brain Training featured section */
+  .brain-featured {
+    margin: 0 20px 8px;
+    border-radius: 16px;
+    padding: 20px;
+    background: linear-gradient(135deg, #004455 0%, #1a6b6e 40%, #46b2b8 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .brain-featured::before {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(241, 215, 125, 0.1);
+    top: -50px;
+    right: -30px;
+  }
+  .brain-featured::after {
+    content: '';
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(70, 178, 184, 0.2);
+    bottom: -40px;
+    left: -20px;
+  }
+  .brain-featured-header {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .brain-featured-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .brain-featured-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  .brain-featured-title {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .brain-featured-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 16px;
+  }
+  .brain-games {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .brain-game {
+    background: rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .brain-game:hover {
+    background: rgba(255,255,255,0.18);
+  }
+  .brain-game-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .brain-game-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+  .brain-game-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.25;
+  }
+  .brain-game-meta {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+  }
+
+  /* Exercise list items */
+  .exercise-list {
+    padding: 0 20px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .exercise-card {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    background: #fff;
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    cursor: pointer;
+  }
+  .exercise-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .exercise-thumb.teal {
+    background: linear-gradient(135deg, #004455, #46b2b8);
+  }
+  .exercise-thumb.teal::before {
+    content: '';
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    top: -6px;
+    right: -6px;
+  }
+  .exercise-thumb.purple {
+    background: linear-gradient(135deg, #6b5b8a, #A791BA);
+  }
+  .exercise-thumb.purple::before {
+    content: '';
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    bottom: -4px;
+    left: -4px;
+  }
+  .exercise-thumb svg {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .exercise-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .exercise-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 3px;
+  }
+  .exercise-meta {
+    font-size: 13px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .exercise-meta .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #bbb;
+  }
+  .exercise-play {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #F5F0E8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .exercise-play svg {
+    width: 14px;
+    height: 14px;
+    fill: #004455;
+    margin-left: 2px;
+  }
+
+  /* Calming sounds horizontal scroll */
+  .sounds-row {
+    display: flex;
+    gap: 14px;
+    padding: 0 20px 28px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sounds-row::-webkit-scrollbar { display: none; }
+  .sound-card {
+    flex-shrink: 0;
+    width: 140px;
+    cursor: pointer;
+  }
+  .sound-thumb {
+    width: 140px;
+    height: 100px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .sound-thumb.evening {
+    background: linear-gradient(160deg, #004455, #1a5060 40%, #46b2b8 80%, #F1D77D);
+  }
+  .sound-thumb.evening::before {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(241,215,125,0.25);
+    top: 10px;
+    right: 15px;
+  }
+  .sound-thumb.soundbath {
+    background: linear-gradient(160deg, #A791BA 0%, #7b6a9a 50%, #5b4a7a);
+  }
+  .sound-thumb.soundbath::before {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    bottom: -20px;
+    left: 20px;
+  }
+  .sound-thumb.soundbath::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(241,215,125,0.15);
+    top: 15px;
+    left: 10px;
+  }
+  .sound-thumb.rain {
+    background: linear-gradient(160deg, #3a7a6a, #46b2b8 50%, #8abfa5);
+  }
+  .sound-thumb.rain::before {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    top: -10px;
+    left: 50px;
+  }
+  .sound-thumb.rain::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    bottom: 15px;
+    right: 15px;
+  }
+  .sound-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+  .sound-sub {
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+  }
+
+  /* Bottom tab bar */
+  .tab-bar {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    height: 72px;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px 20px 32px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    z-index: 20;
+    box-shadow: 0 -1px 0 rgba(0,0,0,0.04), 0 -4px 12px rgba(0,0,0,0.03);
+  }
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    width: 64px;
+    cursor: pointer;
+    padding: 6px 0 4px;
+    border-radius: 12px;
+    transition: background 0.15s ease;
+  }
+  .tab-item.active {
+    background: #f0f0f0;
+  }
+  .tab-spacer {
+    width: 60px;
+    flex-shrink: 0;
+  }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #004455;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,68,85,0.35);
+    z-index: 25;
+    cursor: pointer;
+  }
+  .fab svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="screen">
+    <div class="dynamic-island"></div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <img src="status-bar.png" alt="" style="width:100%;height:auto;display:block;">
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <h1>Explore</h1>
+      <div class="header-icons">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+      </div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="content">
+
+      <!-- Topic pills -->
+      <div class="topics">
+        <div class="pill active">Stress</div>
+        <div class="pill">Sleep</div>
+        <div class="pill">Anxiety</div>
+        <div class="pill">Resilience</div>
+        <div class="pill">Focus</div>
+      </div>
+
+      <!-- Brain Training: featured section with game grid -->
+      <div class="section-header">
+        <h2>Brain Training</h2>
+        <span class="see-all">See all</span>
+      </div>
+      <div class="brain-featured">
+        <div class="brain-featured-header">
+          <div class="brain-featured-icon">
+            <!-- brain / neuron icon -->
+            <svg viewBox="0 0 20 20" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.3" stroke-linecap="round">
+              <path d="M10 3c-3 0-6 2.5-6 6.5 0 2.5 1.2 4.5 3.2 6.1V18h5.6v-2.4C14.8 14 16 12 16 9.5 16 5.5 13 3 10 3z"/>
+              <path d="M8 10c0-1.5 1-2.5 2-2.5s2 1 2 2.5"/>
+              <line x1="10" y1="7.5" x2="10" y2="13"/>
+            </svg>
+          </div>
+          <div class="brain-featured-title">Train Your Brain</div>
+        </div>
+        <div class="brain-featured-sub">Science-backed games to sharpen cognition</div>
+        <div class="brain-games">
+          <!-- Think Memory -->
+          <div class="brain-game">
+            <div class="brain-game-icon">
+              <!-- grid / memory icon -->
+              <svg viewBox="0 0 16 16" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="1" width="6" height="6" rx="1"/>
+                <rect x="9" y="1" width="6" height="6" rx="1"/>
+                <rect x="1" y="9" width="6" height="6" rx="1"/>
+                <rect x="9" y="9" width="6" height="6" rx="1"/>
+              </svg>
+            </div>
+            <div class="brain-game-name">Think Memory</div>
+            <div class="brain-game-meta">Pattern recall</div>
+          </div>
+          <!-- Faces & Names -->
+          <div class="brain-game">
+            <div class="brain-game-icon">
+              <!-- face icon -->
+              <svg viewBox="0 0 16 16" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" stroke-linecap="round">
+                <circle cx="8" cy="7" r="5"/>
+                <circle cx="6.5" cy="6" r="0.6" fill="rgba(255,255,255,0.8)" stroke="none"/>
+                <circle cx="9.5" cy="6" r="0.6" fill="rgba(255,255,255,0.8)" stroke="none"/>
+                <path d="M6 9c.8 1 3.2 1 4 0"/>
+              </svg>
+            </div>
+            <div class="brain-game-name">Faces & Names</div>
+            <div class="brain-game-meta">Social memory</div>
+          </div>
+          <!-- Emotion Recognition -->
+          <div class="brain-game">
+            <div class="brain-game-icon">
+              <!-- heart-eye / emotion icon -->
+              <svg viewBox="0 0 16 16" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" stroke-linecap="round">
+                <circle cx="8" cy="8" r="6"/>
+                <path d="M5.5 6.5c.3-.5.8-.8 1.3-.5.5.3.5.9.2 1.3L5.5 9"/>
+                <path d="M10.5 6.5c-.3-.5-.8-.8-1.3-.5-.5.3-.5.9-.2 1.3L10.5 9"/>
+                <path d="M6 11c.8.8 3.2.8 4 0"/>
+              </svg>
+            </div>
+            <div class="brain-game-name">Emotion Recognition</div>
+            <div class="brain-game-meta">Emotional intelligence</div>
+          </div>
+          <!-- Focus Flow -->
+          <div class="brain-game">
+            <div class="brain-game-icon">
+              <!-- crosshair / focus icon -->
+              <svg viewBox="0 0 16 16" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" stroke-linecap="round">
+                <circle cx="8" cy="8" r="5"/>
+                <circle cx="8" cy="8" r="2"/>
+                <line x1="8" y1="1" x2="8" y2="4"/>
+                <line x1="8" y1="12" x2="8" y2="15"/>
+                <line x1="1" y1="8" x2="4" y2="8"/>
+                <line x1="12" y1="8" x2="15" y2="8"/>
+              </svg>
+            </div>
+            <div class="brain-game-name">Focus Flow</div>
+            <div class="brain-game-meta">Attention training</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height: 24px;"></div>
+
+      <!-- Breathing Exercises -->
+      <div class="section-header">
+        <h2>Breathing Exercises</h2>
+        <span class="see-all">See all</span>
+      </div>
+      <div class="exercise-list">
+        <!-- Resonant Breathing -->
+        <div class="exercise-card">
+          <div class="exercise-thumb teal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.4" stroke-linecap="round">
+              <path d="M12 4c0 0-6 3-6 8s6 8 6 8"/>
+              <path d="M12 4c0 0 6 3 6 8s-6 8-6 8"/>
+            </svg>
+          </div>
+          <div class="exercise-info">
+            <div class="exercise-title">Resonant Breathing</div>
+            <div class="exercise-meta">
+              <span>Balance & calm</span>
+              <span class="dot"></span>
+              <span>4 min</span>
+            </div>
+          </div>
+          <div class="exercise-play">
+            <svg viewBox="0 0 14 14"><polygon points="3,1 13,7 3,13"/></svg>
+          </div>
+        </div>
+        <!-- Box Breathing -->
+        <div class="exercise-card">
+          <div class="exercise-thumb teal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="5" width="14" height="14" rx="2"/>
+              <circle cx="12" cy="12" r="2.5"/>
+            </svg>
+          </div>
+          <div class="exercise-info">
+            <div class="exercise-title">Box Breathing</div>
+            <div class="exercise-meta">
+              <span>Deep focus</span>
+              <span class="dot"></span>
+              <span>5 min</span>
+            </div>
+          </div>
+          <div class="exercise-play">
+            <svg viewBox="0 0 14 14"><polygon points="3,1 13,7 3,13"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meditations -->
+      <div class="section-header">
+        <h2>Meditations</h2>
+        <span class="see-all">See all</span>
+      </div>
+      <div class="exercise-list">
+        <!-- Body Scan for Tension -->
+        <div class="exercise-card">
+          <div class="exercise-thumb purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.4" stroke-linecap="round">
+              <circle cx="12" cy="5" r="2.5"/>
+              <path d="M12 7.5v7"/>
+              <path d="M8 11h8"/>
+              <path d="M9.5 21l2.5-6.5 2.5 6.5"/>
+            </svg>
+          </div>
+          <div class="exercise-info">
+            <div class="exercise-title">Body Scan for Tension</div>
+            <div class="exercise-meta">
+              <span>Guided</span>
+              <span class="dot"></span>
+              <span>10 min</span>
+            </div>
+          </div>
+          <div class="exercise-play">
+            <svg viewBox="0 0 14 14"><polygon points="3,1 13,7 3,13"/></svg>
+          </div>
+        </div>
+        <!-- Stress Release -->
+        <div class="exercise-card">
+          <div class="exercise-thumb purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.4" stroke-linecap="round">
+              <ellipse cx="12" cy="18" rx="8" ry="2.5"/>
+              <path d="M12 6c-2.5 0-5 2.5-5 6 0 2.5 1.8 5 5 7.5 3.2-2.5 5-5 5-7.5 0-3.5-2.5-6-5-6z"/>
+              <circle cx="12" cy="12" r="1.8"/>
+            </svg>
+          </div>
+          <div class="exercise-info">
+            <div class="exercise-title">Stress Release</div>
+            <div class="exercise-meta">
+              <span>Guided</span>
+              <span class="dot"></span>
+              <span>8 min</span>
+            </div>
+          </div>
+          <div class="exercise-play">
+            <svg viewBox="0 0 14 14"><polygon points="3,1 13,7 3,13"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calming Sounds -->
+      <div class="section-header">
+        <h2>Calming Sounds</h2>
+        <span class="see-all">See all</span>
+      </div>
+      <div class="sounds-row">
+        <div class="sound-card">
+          <div class="sound-thumb evening"></div>
+          <div class="sound-title">Peaceful Evening</div>
+          <div class="sound-sub">Ambient  --  30 min</div>
+        </div>
+        <div class="sound-card">
+          <div class="sound-thumb soundbath"></div>
+          <div class="sound-title">Gentle Soundbath</div>
+          <div class="sound-sub">Healing  --  20 min</div>
+        </div>
+        <div class="sound-card">
+          <div class="sound-thumb rain"></div>
+          <div class="sound-title">Tropical Rain</div>
+          <div class="sound-sub">Nature  --  45 min</div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- FAB -->
+    <div class="fab">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round"/></svg>
+    </div>
+
+    <!-- Bottom tab bar -->
+    <div class="tab-bar">
+      <div class="tab-item"><img src="icon-home.png" alt="Home" style="width:80px;height:auto;opacity:0.45;"></div>
+      <div class="tab-item"><img src="icon-journey.png" alt="Journey" style="width:80px;height:auto;opacity:0.45;"></div>
+
+      <div class="tab-spacer"></div>
+
+      <div class="tab-item active"><img src="icon-explore.png" alt="Explore" style="width:80px;height:auto;opacity:1;"></div>
+      <div class="tab-item"><img src="icon-sonder.png" alt="Sonder" style="width:80px;height:auto;opacity:0.45;"></div>
+    </div>
+
+  </div><!-- /screen -->
+</div><!-- /device -->
+
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TBS Mockup Review</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F5F0E8;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #1a1a1a;
+    padding: 40px 0;
+  }
+  .header {
+    text-align: center;
+    padding: 0 40px 40px;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    color: #004455;
+  }
+  .header p {
+    font-size: 14px;
+    color: #777;
+  }
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(245,240,232,0.95);
+    backdrop-filter: blur(12px);
+    padding: 12px 40px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+    text-decoration: none;
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: all 0.2s;
+  }
+  .nav a:hover {
+    color: #004455;
+    border-color: rgba(0,68,85,0.3);
+  }
+  .screen-section {
+    padding: 60px 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .screen-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #004455;
+    background: rgba(0,68,85,0.1);
+    padding: 4px 14px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .screen-title {
+    font-size: 20px;
+    font-weight: 300;
+    margin-bottom: 24px;
+    color: #555;
+  }
+  iframe {
+    width: 420px;
+    height: 900px;
+    border: none;
+    border-radius: 8px;
+    background: #e8e8e8;
+  }
+  .divider {
+    width: 200px;
+    height: 1px;
+    background: rgba(0,0,0,0.06);
+    margin: 40px auto 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>TOTAL BRAIN SOLUTIONS</h1>
+  <p>Mockup Review -- 13 Screens</p>
+</div>
+
+<div class="nav">
+  <a href="#s01">01 Home</a>
+  <a href="#s02">02 FAB Menu</a>
+  <a href="#s03">03 Journey</a>
+  <a href="#s04">04 Activity</a>
+  <a href="#s05">05 Assessment</a>
+  <a href="#s06">06 Subscore</a>
+  <a href="#s07">07 Stress Ctrl</a>
+  <a href="#s08">08 Mood</a>
+  <a href="#s09">09 Goal</a>
+  <a href="#s10">10 Explore</a>
+  <a href="#s11">11 Sonder</a>
+  <a href="#s12">12 In-Chat</a>
+  <a href="#s13">13 AI Connect</a>
+<a href="edit-audit.html" target="_blank" style="background:rgba(241,215,125,0.15);color:#C4A65A;border-color:#C4A65A">Edit Audit</a>
+</div>
+
+<div class="screen-section" id="s01">
+  <span class="screen-label">01</span>
+  <div class="screen-title">Home</div>
+  <iframe src="01-home.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s02">
+  <span class="screen-label">02</span>
+  <div class="screen-title">FAB Menu</div>
+  <iframe src="05-fab-menu.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s03">
+  <span class="screen-label">03</span>
+  <div class="screen-title">Journey -- Insights</div>
+  <iframe src="02-journey.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s04">
+  <span class="screen-label">04</span>
+  <div class="screen-title">Journey -- Activity</div>
+  <iframe src="10-journey-activity.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s05">
+  <span class="screen-label">05</span>
+  <div class="screen-title">Assessment Result</div>
+  <iframe src="07-assessment-result.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s06">
+  <span class="screen-label">06</span>
+  <div class="screen-title">Emotional Resilience Detail</div>
+  <iframe src="09-subscore-detail.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s07">
+  <span class="screen-label">07</span>
+  <div class="screen-title">Stress Control Detail</div>
+  <iframe src="11-stress-control-detail.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s08">
+  <span class="screen-label">08</span>
+  <div class="screen-title">Mood / Daily Reflection</div>
+  <iframe src="12-mood-reflection.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s09">
+  <span class="screen-label">09</span>
+  <div class="screen-title">Goal Setting</div>
+  <iframe src="13-goal-setting.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s10">
+  <span class="screen-label">10</span>
+  <div class="screen-title">Explore</div>
+  <iframe src="03-explore.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s11">
+  <span class="screen-label">11</span>
+  <div class="screen-title">Coach -- Sonder</div>
+  <iframe src="04-coach-sonder.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s12">
+  <span class="screen-label">12</span>
+  <div class="screen-title">Assessment In-Chat</div>
+  <iframe src="08-assessment-in-chat.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div class="screen-section" id="s13">
+  <span class="screen-label">13</span>
+  <div class="screen-title">AI Connect</div>
+  <iframe src="06-ai-connect.html"></iframe>
+  <div class="divider"></div>
+</div>
+
+<div style="height:80px"></div>
+
+</body>
+</html>

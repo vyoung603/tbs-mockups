@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TBS - Assessment Result</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #e8e8e8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  /* Device frame */
+  .device {
+    width: 402px;
+    height: 874px;
+    background: #1a1a1a;
+    border-radius: 48px;
+    padding: 8px;
+    position: relative;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05) inset;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    background: #F5F0E8;
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Dynamic island */
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 24px 0;
+    flex-shrink: 0;
+  }
+
+  /* Header */
+  .header {
+    padding: 6px 20px 14px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    background: #F5F0E8;
+  }
+
+  .back-arrow {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .back-arrow svg {
+    width: 20px;
+    height: 20px;
+    color: #004455;
+  }
+
+  .header-title {
+    flex: 1;
+    text-align: center;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-right: 32px;
+  }
+
+  /* Scrollable content */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px 120px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .content::-webkit-scrollbar { display: none; }
+
+  /* Overall score ring */
+  .score-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0 20px;
+  }
+
+  .score-ring {
+    position: relative;
+    width: 160px;
+    height: 160px;
+  }
+
+  .score-ring svg {
+    width: 160px;
+    height: 160px;
+    transform: rotate(-90deg);
+  }
+
+  .ring-bg {
+    fill: none;
+    stroke: #e0ddd6;
+    stroke-width: 10;
+  }
+
+  .ring-fill {
+    fill: none;
+    stroke: url(#tealGradient);
+    stroke-width: 10;
+    stroke-linecap: round;
+    stroke-dasharray: 408;
+    stroke-dashoffset: 122.4;
+    transition: stroke-dashoffset 1.2s ease;
+  }
+
+  .score-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 52px;
+    font-weight: 700;
+    color: #004455;
+    line-height: 1;
+  }
+
+  .score-label {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    color: #1a1a1a;
+    margin-top: 12px;
+    font-weight: 600;
+  }
+
+  .score-subtitle {
+    font-size: 12.5px;
+    color: #888;
+    margin-top: 4px;
+    letter-spacing: 0.1px;
+  }
+
+  /* Domain cards */
+  .domain-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .domain-card:active {
+    background: #faf8f4;
+  }
+
+  .domain-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .domain-name {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .domain-score {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 8px;
+    background: #f0eeea;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+
+  .progress-fill.emotional { background: #8EB2FF; width: 72%; }
+  .progress-fill.cognitive  { background: #A3B86B; width: 65%; }
+  .progress-fill.control    { background: #E8D5A3; width: 58%; }
+
+  .badge-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    color: #fff;
+    letter-spacing: 0.3px;
+  }
+
+  .badge.emotional { background: #8EB2FF; }
+  .badge.cognitive  { background: #A3B86B; }
+  .badge.control    { background: #d4be7a; }
+
+  .trend {
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+
+  .trend.up { color: #5a9a6b; }
+  .trend.down { color: #c47a5a; }
+
+  .domain-insight {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.45;
+    margin-bottom: 8px;
+  }
+
+  .domain-link {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #004455;
+    text-decoration: none;
+    cursor: pointer;
+    display: none;
+  }
+
+  .domain-card-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .domain-card-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .domain-chevron {
+    flex-shrink: 0;
+    font-size: 20px;
+    color: #bbb;
+    line-height: 1;
+    padding-top: 2px;
+    margin-left: 8px;
+    align-self: center;
+  }
+
+  .train-btn {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #004455;
+    border: 1.5px solid #004455;
+    border-radius: 14px;
+    padding: 8px 16px;
+    background: transparent;
+    cursor: pointer;
+    letter-spacing: 0.2px;
+    margin-top: 4px;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .train-btn:active {
+    background: #004455;
+    color: #fff;
+  }
+
+  .score-shift {
+    font-size: 12.5px;
+    color: #5a9a6b;
+    margin-top: 4px;
+    letter-spacing: 0.1px;
+  }
+
+  /* Coach recommendation */
+  .coach-card {
+    background: #004455;
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .coach-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .coach-avatar svg {
+    width: 18px;
+    height: 18px;
+    color: #004455;
+  }
+
+  .coach-text {
+    flex: 1;
+  }
+
+  .coach-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #F1D77D;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+  }
+
+  .coach-message {
+    font-size: 13px;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.5;
+  }
+
+  .coach-message strong {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  /* CTA button */
+  .cta-button {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: #004455;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    letter-spacing: 0.1px;
+    margin-bottom: 16px;
+    transition: opacity 0.2s;
+  }
+
+  .cta-button:active { opacity: 0.85; }
+
+  /* Bottom tab bar */
+  .tab-bar {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    height: 72px;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px 20px 32px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    z-index: 20;
+    box-shadow: 0 -1px 0 rgba(0,0,0,0.04), 0 -4px 12px rgba(0,0,0,0.03);
+  }
+  .tab-item { display: flex; flex-direction: column; align-items: center; width: 64px; cursor: pointer; padding: 6px 0 4px; border-radius: 12px; }
+  .tab-item.active { background: #f0f0f0; }
+  .tab-spacer { width: 60px; flex-shrink: 0; }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    background: #004455;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,68,85,0.35);
+    z-index: 25;
+    cursor: pointer;
+  }
+
+  .fab svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="screen">
+    <!-- Dynamic Island -->
+    <div class="dynamic-island"></div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <img src="status-bar.png" alt="" style="width:100%;height:auto;display:block;">
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="back-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </div>
+      <div class="header-title">Your Resilience Profile</div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="content">
+
+      <!-- Overall score -->
+      <div class="score-section">
+        <div class="score-ring">
+          <svg viewBox="0 0 160 160">
+            <defs>
+              <linearGradient id="tealGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#46b2b8"/>
+                <stop offset="100%" stop-color="#004455"/>
+              </linearGradient>
+            </defs>
+            <circle class="ring-bg" cx="80" cy="80" r="65"/>
+            <circle class="ring-fill" cx="80" cy="80" r="65"/>
+          </svg>
+          <div class="score-value">65</div>
+        </div>
+        <div class="score-label">Overall Resilience</div>
+        <div class="score-shift">&#8593;2 from last assessment</div>
+        <div class="score-subtitle">Based on your Apr 16 assessment</div>
+      </div>
+
+      <!-- Emotional Resilience -->
+      <div class="domain-card">
+        <div class="domain-card-inner">
+          <div class="domain-card-content">
+            <div class="domain-header">
+              <span class="domain-name">Emotional Resilience</span>
+              <span class="domain-score" style="color:#7a9ee6;">72</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill emotional"></div>
+            </div>
+            <div class="badge-row">
+              <span class="badge emotional">Strong</span>
+              <span class="trend up">&#8593;3 this week</span>
+            </div>
+            <p class="domain-insight">You regulate emotions well under pressure</p>
+            <button class="train-btn">Train this</button>
+          </div>
+          <span class="domain-chevron">&#8250;</span>
+        </div>
+      </div>
+
+      <!-- Cognitive Resilience -->
+      <div class="domain-card">
+        <div class="domain-card-inner">
+          <div class="domain-card-content">
+            <div class="domain-header">
+              <span class="domain-name">Cognitive Resilience</span>
+              <span class="domain-score" style="color:#8fa85c;">65</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill cognitive"></div>
+            </div>
+            <div class="badge-row">
+              <span class="badge cognitive">Developing</span>
+              <span class="trend up">&#8593;1 this week</span>
+            </div>
+            <p class="domain-insight">Your focus and planning are solid but memory could improve</p>
+            <button class="train-btn">Train this</button>
+          </div>
+          <span class="domain-chevron">&#8250;</span>
+        </div>
+      </div>
+
+      <!-- Self-Control -->
+      <div class="domain-card">
+        <div class="domain-card-inner">
+          <div class="domain-card-content">
+            <div class="domain-header">
+              <span class="domain-name">Self-Control</span>
+              <span class="domain-score" style="color:#c9ad6e;">58</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill control"></div>
+            </div>
+            <div class="badge-row">
+              <span class="badge control">Building</span>
+              <span class="trend down">&#8595;2 this week</span>
+            </div>
+            <p class="domain-insight">Impulse regulation is your biggest growth opportunity</p>
+            <button class="train-btn">Train this</button>
+          </div>
+          <span class="domain-chevron">&#8250;</span>
+        </div>
+      </div>
+
+      <!-- Coach recommendation -->
+      <div class="coach-card">
+        <div class="coach-avatar">
+          <svg viewBox="0 0 28 28" fill="none" width="24" height="24">
+            <path d="M10 1C10 1 10.86 5.43 12.57 7.14C14.29 8.86 18 8 18 8C18 8 14.29 8.86 12.57 10.57C10.86 12.29 10 16 10 16C10 16 9.14 12.29 7.43 10.57C5.71 8.86 3 8 3 8C3 8 5.71 7.14 7.43 5.43C9.14 3.71 10 1 10 1Z" fill="#F1D77D"/>
+            <path d="M21 10C21 10 21.5 12.5 22.5 13.5C23.5 14.5 26 14 26 14C26 14 23.5 14.5 22.5 15.5C21.5 16.5 21 19 21 19C21 19 20.5 16.5 19.5 15.5C18.5 14.5 17 14 17 14C17 14 18.5 13.5 19.5 12.5C20.5 11.5 21 10 21 10Z" fill="#F1D77D" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="coach-text">
+          <span style="font-size:12px;font-weight:600;color:#004455;letter-spacing:0.3px;text-transform:uppercase;display:block;margin-bottom:4px">Sonder</span>
+          <p class="coach-message"><strong>Your emotional resilience is your superpower.</strong> Let's build on that foundation by strengthening self-control -- even 5 minutes of daily practice makes a measurable difference.</p>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <button class="cta-button">Chat with Sonder</button>
+
+    </div>
+
+    <!-- FAB -->
+    <div class="fab">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round"/></svg>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="tab-bar">
+      <div class="tab-item active"><img src="icon-home.png" alt="Home" style="width:80px;height:auto;opacity:1;"></div>
+      <div class="tab-item"><img src="icon-journey.png" alt="Journey" style="width:80px;height:auto;opacity:0.45;"></div>
+
+      <div class="tab-spacer"></div>
+
+      <div class="tab-item"><img src="icon-explore.png" alt="Explore" style="width:80px;height:auto;opacity:0.45;"></div>
+      <div class="tab-item"><img src="icon-sonder.png" alt="Sonder" style="width:80px;height:auto;opacity:0.45;"></div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TBS Goal Setting</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #e8e8e8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  /* Device Frame */
+  .device {
+    width: 402px;
+    height: 874px;
+    background: #1a1a1a;
+    border-radius: 48px;
+    padding: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    position: relative;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 24px 0;
+    flex-shrink: 0;
+    background: #fff;
+  }
+
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Header Bar */
+  .header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 20px 12px;
+    flex-shrink: 0;
+    background: #fff;
+  }
+
+  .back-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.15s ease;
+  }
+
+  .back-btn:hover {
+    background: rgba(0,0,0,0.04);
+  }
+
+  .back-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: #1a1a1a;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .save-btn {
+    width: 36px;
+    height: 36px;
+    background: #004455;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+
+  .save-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .save-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Scrollable Content */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 24px 40px;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content::-webkit-scrollbar { display: none; }
+
+  /* Status Badge */
+  .status-badge {
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 4px 10px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    margin-bottom: 16px;
+  }
+
+  .status-badge span {
+    font-size: 11px;
+    font-weight: 500;
+    color: #777;
+    letter-spacing: 0.1px;
+  }
+
+  /* Goal Title Input */
+  .goal-title-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    padding: 8px 0 14px;
+    background: transparent;
+    border-bottom: 1px solid #eee;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+  }
+
+  .goal-title-input::placeholder {
+    color: #c0c0c0;
+    font-weight: 600;
+  }
+
+  /* Spacer */
+  .spacer-24 {
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  /* Sonder Helper Card */
+  .sonder-helper {
+    background: linear-gradient(135deg, #E3EDEC 0%, #dce8e5 100%);
+    border-radius: 18px;
+    padding: 20px;
+    border: 1px solid rgba(0,68,85,0.05);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .sonder-helper::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(70,178,184,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .sonder-helper::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: -10px;
+    width: 70px;
+    height: 70px;
+    background: radial-gradient(circle, rgba(241,215,125,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .sonder-helper-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sonder-helper-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 13px 20px;
+    background: #004455;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.15s ease;
+  }
+
+  .sonder-helper-btn:hover {
+    transform: scale(1.02);
+  }
+
+  .sonder-helper-btn .sparkle {
+    font-size: 15px;
+    color: #F1D77D;
+    line-height: 1;
+  }
+
+  .sonder-helper-btn span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.1px;
+  }
+
+  /* Goal Description Textarea */
+  .description-container {
+    border: 1px solid #e4e4e4;
+    border-radius: 14px;
+    padding: 14px 16px;
+    position: relative;
+    flex-shrink: 0;
+    min-height: 160px;
+    background: #fff;
+  }
+
+  .description-textarea {
+    width: 100%;
+    height: 130px;
+    border: none;
+    outline: none;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    color: #1a1a1a;
+    line-height: 1.55;
+    resize: none;
+    background: transparent;
+  }
+
+  .description-textarea::placeholder {
+    color: #bbb;
+  }
+
+  /* Resize grip dots */
+  .resize-grip {
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    opacity: 0.25;
+  }
+
+  .resize-grip .dot-row {
+    display: flex;
+    gap: 2px;
+  }
+
+  .resize-grip .dot {
+    width: 3px;
+    height: 3px;
+    background: #999;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="screen">
+    <div class="dynamic-island"></div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <img src="status-bar.png" alt="" style="width:100%;height:auto;display:block;">
+    </div>
+
+    <!-- Header Bar -->
+    <div class="header-bar">
+      <div class="back-btn">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+      </div>
+      <div class="save-btn">
+        <svg viewBox="0 0 24 24"><polyline points="6 12 10 16 18 8"/></svg>
+      </div>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+
+      <!-- Status Badge -->
+      <div class="status-badge">
+        <span>Not started</span>
+      </div>
+
+      <!-- Goal Title Input -->
+      <input type="text" class="goal-title-input" placeholder="Add a goal title">
+
+      <div class="spacer-24"></div>
+
+      <!-- Sonder Helper Card -->
+      <div class="sonder-helper">
+        <div class="sonder-helper-title">Want help writing a goal?</div>
+        <button class="sonder-helper-btn">
+          <span class="sparkle">&#10022;</span>
+          <span>Let's talk about it</span>
+        </button>
+      </div>
+
+      <div class="spacer-24"></div>
+
+      <!-- Goal Description Textarea -->
+      <div class="description-container">
+        <textarea class="description-textarea" placeholder="Add a goal description..."></textarea>
+        <div class="resize-grip">
+          <div class="dot-row">
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="dot-row">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

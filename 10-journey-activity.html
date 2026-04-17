@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TBS Journey - Activity</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  /* Device frame */
+  .device {
+    width: 402px;
+    height: 874px;
+    background: #1a1a1a;
+    border-radius: 48px;
+    padding: 8px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.08) inset;
+    position: relative;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    background: #F5F0E8;
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 24px 0;
+    flex-shrink: 0;
+  }
+
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Scrollable content area */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px 100px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .content::-webkit-scrollbar { display: none; }
+
+  /* Header */
+  .header {
+    padding: 4px 0 14px;
+  }
+
+  .header h1 {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 28px;
+    color: #1a1a1a;
+    font-weight: 400;
+    margin-bottom: 14px;
+  }
+
+  .tab-pills {
+    display: flex;
+    gap: 10px;
+  }
+
+  .tab-pill {
+    padding: 8px 20px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab-pill.active {
+    background: #004455;
+    color: #fff;
+  }
+
+  .tab-pill.inactive {
+    background: transparent;
+    color: #004455;
+    border: 1.5px solid #004455;
+  }
+
+  /* Summary strip */
+  .summary-strip {
+    padding: 10px 0 12px;
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    border-bottom: 1px solid #e6e1d6;
+    margin-bottom: 12px;
+  }
+
+  .summary-strip span {
+    color: #004455;
+    font-weight: 700;
+  }
+
+  /* Filter row */
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    padding-bottom: 14px;
+    overflow-x: auto;
+  }
+
+  .filter-row::-webkit-scrollbar { display: none; }
+
+  .filter-pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-pill.active {
+    background: #004455;
+    color: #fff;
+  }
+
+  .filter-pill.inactive {
+    background: transparent;
+    color: #777;
+    border: 1.5px solid #ccc;
+  }
+
+  /* Month header */
+  .month-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0 14px;
+  }
+
+  .month-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .month-nav .arrow {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .month-nav .arrow svg {
+    width: 14px;
+    height: 14px;
+    stroke: #004455;
+    stroke-width: 2.5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .month-nav .month-label {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 17px;
+    color: #1a1a1a;
+    font-weight: 400;
+  }
+
+  .month-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #004455;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .month-dropdown svg {
+    width: 10px;
+    height: 10px;
+    stroke: #004455;
+    stroke-width: 2.5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Date group */
+  .date-group {
+    margin-bottom: 6px;
+  }
+
+  .date-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 8px 0 8px;
+  }
+
+  /* Activity cards */
+  .activity-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 14px 14px 18px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    border-left: 4px solid transparent;
+  }
+
+  .activity-card.type-assessment { border-left-color: #3a9a5b; }
+  .activity-card.type-training { border-left-color: #8EB2FF; }
+  .activity-card.type-exercise { border-left-color: #46b2b8; }
+  .activity-card.type-meditation { border-left-color: #A791BA; }
+
+  .activity-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .activity-icon.assessment { background: #e8f5ec; }
+  .activity-icon.training { background: #e8eeff; }
+  .activity-icon.exercise { background: #e3f3f4; }
+  .activity-icon.meditation { background: #f0ebf5; }
+
+  .activity-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .activity-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .activity-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+
+  .activity-meta {
+    font-size: 12px;
+    color: #888;
+    line-height: 1.3;
+  }
+
+  .activity-duration {
+    font-size: 12px;
+    color: #aaa;
+    font-weight: 500;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  /* Bottom tab bar */
+  .tab-bar {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    height: 72px;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px 20px 32px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    z-index: 20;
+    box-shadow: 0 -1px 0 rgba(0,0,0,0.04), 0 -4px 12px rgba(0,0,0,0.03);
+  }
+
+  .tab-item { display: flex; flex-direction: column; align-items: center; width: 64px; cursor: pointer; padding: 6px 0 4px; border-radius: 12px; }
+  .tab-item.active { background: #f0f0f0; }
+
+  .tab-spacer {
+    width: 60px;
+    flex-shrink: 0;
+  }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    background: #004455;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,68,85,0.35);
+    z-index: 25;
+    cursor: pointer;
+  }
+
+  .fab svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="screen">
+    <div class="dynamic-island"></div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <img src="status-bar.png" alt="" style="width:100%;height:auto;display:block;">
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+
+      <!-- Header -->
+      <div class="header">
+        <h1>Journey</h1>
+        <div class="tab-pills">
+          <div class="tab-pill inactive">Insights</div>
+          <div class="tab-pill active">Activity</div>
+        </div>
+      </div>
+
+      <!-- Summary strip -->
+      <div class="summary-strip">
+        <span>12</span> activities this week &middot; <span>3</span> assessments &middot; <span>47 min</span> total
+      </div>
+
+      <!-- Filter row -->
+      <div class="filter-row">
+        <div class="filter-pill active">All</div>
+        <div class="filter-pill inactive">Assessments</div>
+        <div class="filter-pill inactive">Training</div>
+        <div class="filter-pill inactive">Exercises</div>
+      </div>
+
+      <!-- Month header -->
+      <div class="month-header">
+        <div class="month-nav">
+          <div class="arrow">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          </div>
+          <span class="month-label">April 2026</span>
+          <div class="arrow">
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="month-dropdown">
+          All
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+
+      <!-- Apr 16, 2026 -->
+      <div class="date-group">
+        <div class="date-label">Apr 16, 2026</div>
+
+        <!-- Stress Check-in -->
+        <div class="activity-card type-assessment">
+          <div class="activity-icon assessment">
+            <svg viewBox="0 0 24 24" stroke="#3a9a5b">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </div>
+          <div class="activity-body">
+            <div class="activity-title">Daily Resilience</div>
+            <div class="activity-meta">Completed &middot; Score: Moderate</div>
+          </div>
+          <div class="activity-duration">3 min</div>
+        </div>
+
+        <!-- Think Memory -->
+        <div class="activity-card type-training">
+          <div class="activity-icon training">
+            <svg viewBox="0 0 24 24" stroke="#8EB2FF">
+              <path d="M12 2a7 7 0 017 7c0 2.8-1.6 5.2-4 6.3V17a1 1 0 01-1 1h-4a1 1 0 01-1-1v-1.7A7 7 0 0112 2z"/>
+              <line x1="10" y1="21" x2="14" y2="21"/>
+            </svg>
+          </div>
+          <div class="activity-body">
+            <div class="activity-title">Think Memory</div>
+            <div class="activity-meta">Completed &middot; Score: Level 4</div>
+          </div>
+          <div class="activity-duration">5 min</div>
+        </div>
+      </div>
+
+      <!-- Apr 15, 2026 -->
+      <div class="date-group">
+        <div class="date-label">Apr 14, 2026</div>
+
+        <!-- Resonant Breathing -->
+        <div class="activity-card type-exercise">
+          <div class="activity-icon exercise">
+            <svg viewBox="0 0 24 24" stroke="#46b2b8">
+              <path d="M17.5 12c2.5-1.5 3.5-4 2-6s-4.5-2.5-7 0c-2.5-2.5-5.5-2-7 0s-.5 4.5 2 6L12 19l5.5-7z"/>
+            </svg>
+          </div>
+          <div class="activity-body">
+            <div class="activity-title">Resonant Breathing</div>
+            <div class="activity-meta">Completed</div>
+          </div>
+          <div class="activity-duration">4 min</div>
+        </div>
+
+        <!-- Just Let Go -->
+        <div class="activity-card type-meditation">
+          <div class="activity-icon meditation">
+            <svg viewBox="0 0 24 24" stroke="#A791BA">
+              <path d="M12 21c-1.5-1.5-6-5.5-6-10a6 6 0 0112 0c0 4.5-4.5 8.5-6 10z"/>
+              <circle cx="12" cy="11" r="2"/>
+            </svg>
+          </div>
+          <div class="activity-body">
+            <div class="activity-title">Just Let Go</div>
+            <div class="activity-meta">Completed</div>
+          </div>
+          <div class="activity-duration">5 min</div>
+        </div>
+
+        <!-- Emotion Recognition -->
+        <div class="activity-card type-training">
+          <div class="activity-icon training">
+            <svg viewBox="0 0 24 24" stroke="#8EB2FF">
+              <path d="M12 2a7 7 0 017 7c0 2.8-1.6 5.2-4 6.3V17a1 1 0 01-1 1h-4a1 1 0 01-1-1v-1.7A7 7 0 0112 2z"/>
+              <line x1="10" y1="21" x2="14" y2="21"/>
+            </svg>
+          </div>
+          <div class="activity-body">
+            <div class="activity-title">Emotion Recognition</div>
+            <div class="activity-meta">Completed &middot; Score: Level 6</div>
+          </div>
+          <div class="activity-duration">4 min</div>
+        </div>
+      </div>
+
+      <!-- Apr 14, 2026 -->
+      <div class="date-group">
+        <div class="date-label">Apr 11, 2026</div>
+
+        <!-- Emotional Resilience Assessment -->
+        <div class="activity-card type-assessment">
+          <div class="activity-icon assessment">
+            <svg viewBox="0 0 24 24" stroke="#3a9a5b">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </div>
+          <div class="activity-body">
+            <div class="activity-title">Emotional Resilience Assessment</div>
+            <div class="activity-meta">Completed &middot; Score: 72</div>
+          </div>
+          <div class="activity-duration">8 min</div>
+        </div>
+
+        <!-- Resonant Breathing -->
+        <div class="activity-card type-exercise">
+          <div class="activity-icon exercise">
+            <svg viewBox="0 0 24 24" stroke="#46b2b8">
+              <path d="M17.5 12c2.5-1.5 3.5-4 2-6s-4.5-2.5-7 0c-2.5-2.5-5.5-2-7 0s-.5 4.5 2 6L12 19l5.5-7z"/>
+            </svg>
+          </div>
+          <div class="activity-body">
+            <div class="activity-title">Resonant Breathing</div>
+            <div class="activity-meta">Completed</div>
+          </div>
+          <div class="activity-duration">4 min</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FAB -->
+    <div class="fab">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round"/></svg>
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab-item"><img src="icon-home.png" alt="Home" style="width:80px;height:auto;opacity:0.45;"></div>
+      <div class="tab-item active"><img src="icon-journey.png" alt="Journey" style="width:80px;height:auto;opacity:1;"></div>
+
+      <div class="tab-spacer"></div>
+
+      <div class="tab-item"><img src="icon-explore.png" alt="Explore" style="width:80px;height:auto;opacity:0.45;"></div>
+      <div class="tab-item"><img src="icon-sonder.png" alt="Sonder" style="width:80px;height:auto;opacity:0.45;"></div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

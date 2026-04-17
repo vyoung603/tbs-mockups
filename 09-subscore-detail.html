@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TBS - Emotional Resilience Detail</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #e8e8e8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  /* Device frame */
+  .device {
+    width: 402px;
+    height: 874px;
+    background: #1a1a1a;
+    border-radius: 48px;
+    padding: 8px;
+    position: relative;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05) inset;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    background: #F5F0E8;
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 24px 0;
+    flex-shrink: 0;
+    background: #F5F0E8;
+  }
+
+  /* Header with accent line */
+  .header {
+    padding: 6px 20px 12px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    background: #F5F0E8;
+    position: relative;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    right: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #8EB2FF, transparent);
+    opacity: 0.5;
+  }
+
+  .back-arrow {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .back-arrow svg {
+    width: 20px;
+    height: 20px;
+    color: #004455;
+  }
+
+  .header-title {
+    flex: 1;
+    text-align: center;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-right: 32px;
+  }
+
+  /* Dynamic island */
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Scrollable content */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 20px 28px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .content::-webkit-scrollbar { display: none; }
+
+  /* Domain score card */
+  .domain-score-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px 20px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    text-align: center;
+    position: relative;
+  }
+
+  .domain-big-score {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 64px;
+    font-weight: 700;
+    color: #8EB2FF;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .domain-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 14px;
+    background: #8EB2FF;
+    color: #fff;
+    letter-spacing: 0.3px;
+    margin-bottom: 8px;
+  }
+
+  .domain-trend {
+    font-size: 13px;
+    font-weight: 500;
+    color: #5a9a6b;
+    margin-bottom: 12px;
+  }
+
+  .domain-summary {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  /* Sparkline */
+  .sparkline-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .sparkline-label {
+    font-size: 11px;
+    color: #999;
+    letter-spacing: 0.2px;
+  }
+
+  .sparkline svg {
+    display: block;
+  }
+
+  /* Sub-scores section */
+  .section-title {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 14px;
+  }
+
+  .subscore-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .subscore-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .subscore-name {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .subscore-value {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #8EB2FF;
+  }
+
+  .subscore-bar-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(142, 178, 255, 0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .subscore-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #a8c4ff, #8EB2FF);
+    transition: width 1s ease;
+  }
+
+  .subscore-desc {
+    font-size: 13px;
+    color: #777;
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+
+  .subscore-trend {
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .subscore-trend.up { color: #5a9a6b; }
+  .subscore-trend.flat { color: #999; }
+
+  /* Train section */
+  .train-section {
+    margin-top: 24px;
+    margin-bottom: 20px;
+  }
+
+  .exercise-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    cursor: pointer;
+  }
+
+  .exercise-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .exercise-thumb.teal {
+    background: linear-gradient(135deg, #46b2b8, #004455);
+  }
+
+  .exercise-thumb.periwinkle {
+    background: linear-gradient(135deg, #a8c4ff, #6b8fd4);
+  }
+
+  .exercise-thumb svg {
+    width: 22px;
+    height: 22px;
+    color: #fff;
+  }
+
+  .exercise-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .exercise-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 2px;
+  }
+
+  .exercise-meta {
+    font-size: 12px;
+    color: #999;
+  }
+
+  .exercise-arrow {
+    width: 20px;
+    height: 20px;
+    color: #ccc;
+    flex-shrink: 0;
+  }
+
+  /* CTA button */
+  .cta-button {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: #004455;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    letter-spacing: 0.1px;
+    margin-bottom: 8px;
+    transition: opacity 0.2s;
+  }
+
+  .cta-button:active { opacity: 0.85; }
+
+  .cta-button.secondary {
+    background: transparent;
+    color: #004455;
+    border: 1.5px solid #004455;
+    margin-bottom: 10px;
+  }
+
+  /* Swipe indicator */
+  .swipe-indicator {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0 4px;
+    flex-shrink: 0;
+  }
+
+  .swipe-pill {
+    width: 40px;
+    height: 4px;
+    background: #d0cdc6;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="screen">
+    <div class="dynamic-island"></div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <img src="status-bar.png" alt="" style="width:100%;height:auto;display:block;">
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="back-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </div>
+      <div class="header-title">Emotional Resilience</div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="content">
+
+      <!-- Domain score card -->
+      <div class="domain-score-card">
+        <div class="domain-big-score">72</div>
+        <div class="domain-badge">Strong</div>
+        <div class="domain-trend">&#8593;3 this week</div>
+        <p class="domain-summary">You regulate emotions well under pressure</p>
+        <div class="sparkline-container">
+          <span class="sparkline-label">4 weeks</span>
+          <div class="sparkline">
+            <svg width="120" height="36" viewBox="0 0 120 36">
+              <defs>
+                <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#8EB2FF" stop-opacity="0.2"/>
+                  <stop offset="100%" stop-color="#8EB2FF" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Fill area -->
+              <path d="M8 28 L38 24 L72 20 L112 8 L112 34 L8 34 Z" fill="url(#sparkGrad)"/>
+              <!-- Line -->
+              <polyline points="8,28 38,24 72,20 112,8" fill="none" stroke="#8EB2FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- Data points -->
+              <circle cx="8" cy="28" r="3" fill="#fff" stroke="#8EB2FF" stroke-width="2"/>
+              <circle cx="38" cy="24" r="3" fill="#fff" stroke="#8EB2FF" stroke-width="2"/>
+              <circle cx="72" cy="20" r="3" fill="#fff" stroke="#8EB2FF" stroke-width="2"/>
+              <circle cx="112" cy="8" r="3" fill="#8EB2FF" stroke="#fff" stroke-width="2"/>
+            </svg>
+          </div>
+          <span class="sparkline-label">now</span>
+        </div>
+      </div>
+
+      <!-- Sub-scores -->
+      <div class="section-title">What makes up this score</div>
+
+      <!-- Stress Regulation -->
+      <div class="subscore-card">
+        <div class="subscore-header">
+          <span class="subscore-name">Stress Control</span>
+          <span class="subscore-value">78</span>
+        </div>
+        <div class="subscore-bar-track">
+          <div class="subscore-bar-fill" style="width: 78%;"></div>
+        </div>
+        <p class="subscore-desc">How well you manage and recover from stress</p>
+        <span class="subscore-trend up">&#8593;5 this week</span>
+      </div>
+
+      <!-- Emotional Awareness -->
+      <div class="subscore-card">
+        <div class="subscore-header">
+          <span class="subscore-name">Emotion Awareness</span>
+          <span class="subscore-value">71</span>
+        </div>
+        <div class="subscore-bar-track">
+          <div class="subscore-bar-fill" style="width: 71%;"></div>
+        </div>
+        <p class="subscore-desc">Your ability to identify and name what you're feeling</p>
+        <span class="subscore-trend up">&#8593;2 this week</span>
+      </div>
+
+      <!-- Emotional Bias -->
+      <div class="subscore-card">
+        <div class="subscore-header">
+          <span class="subscore-name">Positivity Bias</span>
+          <span class="subscore-value">67</span>
+        </div>
+        <div class="subscore-bar-track">
+          <div class="subscore-bar-fill" style="width: 67%;"></div>
+        </div>
+        <p class="subscore-desc">Your tendency toward optimistic emotional framing</p>
+        <span class="subscore-trend flat">&#8594; No change</span>
+      </div>
+
+      <!-- Train section -->
+      <div class="train-section">
+        <div class="section-title">Improve your emotional resilience</div>
+
+        <div class="exercise-card">
+          <div class="exercise-thumb teal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+          </div>
+          <div class="exercise-info">
+            <div class="exercise-title">Resonant Breathing</div>
+            <div class="exercise-meta">4 min</div>
+          </div>
+          <svg class="exercise-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-thumb periwinkle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 7v5l3 3"/>
+            </svg>
+          </div>
+          <div class="exercise-info">
+            <div class="exercise-title">Emotion Recognition</div>
+            <div class="exercise-meta">Brain Training</div>
+          </div>
+          <svg class="exercise-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <button class="cta-button secondary">See more trainings</button>
+      <button class="cta-button">Chat with Sonder</button>
+
+    </div>
+
+    <!-- Swipe indicator (no tab bar on detail screen) -->
+    <div class="swipe-indicator">
+      <div class="swipe-pill"></div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

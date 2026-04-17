@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sonder - Assessment In Chat</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #e8e4de;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  /* Device frame */
+  .device {
+    width: 402px;
+    height: 874px;
+    background: #1a1a1a;
+    border-radius: 48px;
+    padding: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    position: relative;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border-radius: 40px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 24px 0;
+    flex-shrink: 0;
+  }
+
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px 6px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+  }
+
+  .header-back {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #004455;
+  }
+
+  .header-title {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #004455;
+    letter-spacing: -0.3px;
+  }
+
+  .header-action {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #004455;
+  }
+
+  /* Trust badge */
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #f8f8f8;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+  }
+
+  .trust-badge svg {
+    width: 14px;
+    height: 14px;
+    color: #46b2b8;
+    flex-shrink: 0;
+  }
+
+  .trust-badge span {
+    font-size: 11.5px;
+    color: #888;
+    letter-spacing: 0.1px;
+  }
+
+  /* Chat area */
+  .chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* Message rows */
+  .msg-row {
+    display: flex;
+    flex-direction: column;
+    max-width: 82%;
+  }
+
+  .msg-row.bot { align-self: flex-start; }
+  .msg-row.user { align-self: flex-end; }
+
+  /* Bubbles */
+  .bubble {
+    padding: 12px 15px;
+    border-radius: 18px;
+    font-size: 15px;
+    line-height: 1.45;
+    color: #1a1a1a;
+  }
+
+  .bot .bubble {
+    background: #f0f0f0;
+    border-bottom-left-radius: 6px;
+  }
+
+  .user .bubble {
+    background: #004455;
+    color: #fff;
+    border-bottom-right-radius: 6px;
+  }
+
+  .bubble p + p {
+    margin-top: 10px;
+  }
+
+  /* Bot avatar indicator */
+  .bot-label {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 3px;
+    padding-left: 2px;
+    font-weight: 500;
+  }
+
+  /* Timestamp */
+  .timestamp {
+    text-align: center;
+    font-size: 11px;
+    color: #bbb;
+    padding: 6px 0 10px;
+  }
+
+  /* Input bar */
+  .input-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px 28px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;
+  }
+
+  .mic-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    flex-shrink: 0;
+  }
+
+  .input-field {
+    flex: 1;
+    height: 40px;
+    background: #f5f5f5;
+    border-radius: 20px;
+    border: none;
+    padding: 0 16px;
+    font-size: 15px;
+    color: #1a1a1a;
+    outline: none;
+  }
+
+  .input-field::placeholder {
+    color: #aaa;
+  }
+
+  .send-btn {
+    width: 36px;
+    height: 36px;
+    background: #004455;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .send-btn svg {
+    width: 18px;
+    height: 18px;
+    color: #fff;
+  }
+
+  /* Home indicator */
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    opacity: 0.2;
+  }
+
+  /* ===================== */
+  /* Bottom Sheet Overlay  */
+  /* ===================== */
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 30px;
+    z-index: 20;
+    pointer-events: none;
+  }
+
+  .bottom-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 55%;
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Drag handle */
+  .drag-handle {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 4px;
+    flex-shrink: 0;
+  }
+
+  .drag-handle-bar {
+    width: 36px;
+    height: 4px;
+    background: #d0d0d0;
+    border-radius: 2px;
+  }
+
+  /* Sheet header */
+  .sheet-header {
+    padding: 8px 24px 14px;
+    flex-shrink: 0;
+  }
+
+  .sheet-title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .sheet-title {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: #004455;
+    letter-spacing: -0.2px;
+  }
+
+  .sheet-step {
+    font-size: 13px;
+    color: #999;
+    font-weight: 500;
+  }
+
+  /* Progress bar */
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: #e8e8e8;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 42.8%; /* 3 of 7 */
+    background: #46b2b8;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  /* Question area */
+  .sheet-content {
+    flex: 1;
+    padding: 18px 24px 0;
+    overflow-y: auto;
+  }
+
+  .question-text {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #1a1a1a;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  /* Answer options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .option:hover {
+    background: #f8f8f8;
+  }
+
+  .option.selected {
+    background: rgba(70, 178, 184, 0.08);
+  }
+
+  /* Radio circles */
+  .radio {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .option.selected .radio {
+    border-color: #46b2b8;
+    background: #46b2b8;
+  }
+
+  .radio-inner {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .option.selected .radio-inner {
+    opacity: 1;
+  }
+
+  .option-label {
+    font-size: 15px;
+    color: #1a1a1a;
+    line-height: 1.3;
+  }
+
+  .option.selected .option-label {
+    color: #004455;
+    font-weight: 600;
+  }
+
+  /* Navigation */
+  .sheet-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    flex-shrink: 0;
+  }
+
+  .nav-back {
+    font-size: 15px;
+    color: #999;
+    font-weight: 500;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 8px 4px;
+    transition: color 0.15s;
+  }
+
+  .nav-back:hover {
+    color: #666;
+  }
+
+  .nav-next {
+    padding: 12px 32px;
+    background: #004455;
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .nav-next:hover {
+    background: #003344;
+  }
+
+  /* Footer text */
+  .sheet-footer {
+    padding: 0 24px 20px;
+    flex-shrink: 0;
+  }
+
+  .sheet-footer-text {
+    font-size: 11.5px;
+    color: #b0b0b0;
+    text-align: center;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="screen">
+    <!-- Dynamic Island -->
+    <div class="dynamic-island"></div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <img src="status-bar.png" alt="" style="width:100%;height:auto;display:block;">
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-back">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <span class="header-title">Sonder</span>
+      <div class="header-action">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      </div>
+    </div>
+
+    <!-- Trust Badge -->
+    <div class="trust-badge">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 16l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg>
+      <span>Reviewed by SonderMind clinical team</span>
+    </div>
+
+    <!-- Chat -->
+    <div class="chat">
+      <div class="timestamp">Today, 9:38 AM</div>
+
+      <!-- User message -->
+      <div class="msg-row user">
+        <div class="bubble">I want to check my stress levels</div>
+      </div>
+
+      <!-- Sonder response -->
+      <div class="msg-row bot">
+        <div class="bot-label">Sonder</div>
+        <div class="bubble">
+          <p>Great idea. I'll run a quick Stress Control check -- it takes about 2 minutes. I'll ask you a few questions about how you've been handling stress this past week.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input bar (dimmed behind overlay) -->
+    <div class="input-bar">
+      <div class="mic-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </div>
+      <input type="text" class="input-field" placeholder="Message Sonder..." readonly>
+      <div class="send-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      </div>
+    </div>
+
+    <!-- Home indicator -->
+    <div class="home-indicator"></div>
+
+    <!-- Dimmed overlay -->
+    <div class="overlay"></div>
+
+    <!-- Bottom Sheet -->
+    <div class="bottom-sheet">
+      <!-- Drag handle -->
+      <div class="drag-handle">
+        <div class="drag-handle-bar"></div>
+      </div>
+
+      <!-- Header -->
+      <div class="sheet-header">
+        <div class="sheet-title-row">
+          <span class="sheet-title">Stress Control</span>
+          <span class="sheet-step">Question 3 of 7</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
+
+      <!-- Question + answers -->
+      <div class="sheet-content">
+        <div class="question-text">During the past week, I felt that I was using a lot of nervous energy</div>
+
+        <div class="options">
+          <div class="option">
+            <div class="radio"><div class="radio-inner"></div></div>
+            <span class="option-label">Never or Almost Never</span>
+          </div>
+          <div class="option">
+            <div class="radio"><div class="radio-inner"></div></div>
+            <span class="option-label">Occasionally</span>
+          </div>
+          <div class="option selected">
+            <div class="radio"><div class="radio-inner"></div></div>
+            <span class="option-label">Often</span>
+          </div>
+          <div class="option">
+            <div class="radio"><div class="radio-inner"></div></div>
+            <span class="option-label">Very Often</span>
+          </div>
+          <div class="option">
+            <div class="radio"><div class="radio-inner"></div></div>
+            <span class="option-label">Always or Almost Always</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="sheet-nav">
+        <button class="nav-back">Back</button>
+        <button class="nav-next">Next</button>
+      </div>
+
+      <!-- Footer -->
+      <div class="sheet-footer">
+        <div class="sheet-footer-text">Your responses help Sonder understand your stress patterns</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

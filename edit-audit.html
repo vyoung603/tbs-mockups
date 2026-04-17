@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TBS Mockup Edit Audit Log</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f8f8f8; color: #1a1a1a; padding: 40px; }
+  h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+  .subtitle { font-size: 14px; color: #888; margin-bottom: 32px; }
+  .summary { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .summary h2 { font-size: 16px; margin-bottom: 12px; }
+  .stat-row { display: flex; gap: 24px; }
+  .stat { text-align: center; }
+  .stat .num { font-size: 32px; font-weight: 700; }
+  .stat .label { font-size: 12px; color: #888; }
+  .stat .num.green { color: #3a9a5b; }
+  .stat .num.red { color: #c44; }
+  .stat .num.yellow { color: #d4912a; }
+  table { width: 100%; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border-collapse: collapse; margin-bottom: 32px; }
+  th { background: #004455; color: #fff; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 14px; text-align: left; }
+  td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .done { color: #3a9a5b; font-weight: 600; }
+  .missed { color: #c44; font-weight: 600; }
+  .partial { color: #d4912a; font-weight: 600; }
+  .fixed { color: #3a9a5b; font-weight: 600; }
+  .screen { font-weight: 600; white-space: nowrap; }
+  .error-section { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 24px; }
+  .error-section h2 { font-size: 16px; margin-bottom: 12px; color: #c44; }
+  .error-section p { font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<h1>TBS Mockup -- Edit Audit Log</h1>
+<p class="subtitle">All edit requests from Val, tracked to completion. Generated April 17, 2026.</p>
+
+<div class="summary">
+  <h2>Summary</h2>
+  <div class="stat-row">
+    <div class="stat"><div class="num">42</div><div class="label">Total Edits Requested</div></div>
+    <div class="stat"><div class="num green">37</div><div class="label">Completed</div></div>
+    <div class="stat"><div class="num yellow">3</div><div class="label">In Progress (this session)</div></div>
+    <div class="stat"><div class="num red">2</div><div class="label">Required Multiple Attempts</div></div>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Screen(s)</th>
+      <th>Edit Requested</th>
+      <th>Status</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- ROUND 1: Initial builds -->
+    <tr><td>1</td><td class="screen">All</td><td>Build 11 screens matching SM brand + Lontra cleanness</td><td class="done">Done</td><td>All 11 screens built from scratch</td></tr>
+
+    <!-- ROUND 2: Val's first review (brand/consistency issues) -->
+    <tr><td>2</td><td class="screen">11</td><td>Stress Control detail must use SM branding (was Lontra style with nature gradients/olive)</td><td class="done">Done</td><td>Complete rewrite to SM brand: white cards, #8EB2FF accent, cream bg</td></tr>
+    <tr><td>3</td><td class="screen">11 vs 09</td><td>Stress Control score must match screen 09 (was 62, should be 78)</td><td class="done">Done</td><td>Updated to 78, "Strong" badge, +5 trend</td></tr>
+    <tr><td>4</td><td class="screen">02</td><td>Streak flame icon is off-brand (was CSS gradient pseudo-element)</td><td class="done">Done</td><td>Replaced with SVG line-stroke fire icon</td></tr>
+    <tr><td>5</td><td class="screen">02</td><td>Mood chart "today" on wrong day (was Sun, should be Wed Apr 16)</td><td class="done">Done</td><td>Moved highlight to Wed</td></tr>
+    <tr><td>6</td><td class="screen">All</td><td>Sonder tab icon wrong (was chat bubble, should be smiley+refresh)</td><td class="done">Done</td><td>All files updated</td></tr>
+    <tr><td>7</td><td class="screen">All</td><td>Explore tab icon wrong (was compass, should be sparkle/starburst)</td><td class="done">Done</td><td>All files updated</td></tr>
+    <tr><td>8</td><td class="screen">All</td><td>WiFi graphic looks weird</td><td class="done">Done</td><td>Replaced with 2-arc + dot pattern matching Figma. Now being replaced with actual PNG.</td></tr>
+    <tr><td>9</td><td class="screen">01</td><td>Home screen not spaced out appropriately, too top-loaded</td><td class="done">Done</td><td>Adjusted header padding, score margins. 3 layout variants still requested.</td></tr>
+    <tr><td>10</td><td class="screen">01</td><td>Add Recent Activity section to home screen</td><td class="done">Done</td><td>Added Daily Resilience + Resonant Breathing cards below CTA</td></tr>
+
+    <!-- ROUND 3: Figma exports dropped -->
+    <tr><td>11</td><td class="screen">All</td><td>Replace status bar (time, signal, WiFi, battery) with Figma PNG export</td><td class="partial">In Progress</td><td>Val dropped "top of iphone.png". Agent running replacement across all 11 files now.</td></tr>
+    <tr><td>12</td><td class="screen">All</td><td>Replace tab icons with Figma export versions (home, journey, explore, sonder)</td><td class="done">Done</td><td>SVGs recreated to match Figma: house, seedling, sparkle, smiley+refresh</td></tr>
+    <tr><td>13</td><td class="screen">05</td><td>FAB menu items: "Create a goal" (trophy), "Write a journal entry" (journal), "Log a mood" (heart-smiley)</td><td class="done">Done</td><td>All 3 items updated with correct icons and labels per Figma exports</td></tr>
+    <tr><td>14</td><td class="screen">All</td><td>Time should be 12:15 across all screens</td><td class="done">Done</td><td>Verified consistent</td></tr>
+    <tr><td>15</td><td class="screen">01, 05</td><td>Greeting should be "Good afternoon, Val"</td><td class="done">Done</td><td>Both screens updated</td></tr>
+
+    <!-- ROUND 4: Consistency audit requests -->
+    <tr><td>16</td><td class="screen">All</td><td>Tab bar must be consistent: 72px, bottom 8px, border-radius 20 20 32 32, blur 16px</td><td class="done">Done</td><td>Standardized across all 11 files</td></tr>
+    <tr><td>17</td><td class="screen">All</td><td>FAB must be consistent: 52x52, bottom 50px, #004455</td><td class="done">Done</td><td>Was 56px on home, fixed to 52px everywhere</td></tr>
+    <tr><td>18</td><td class="screen">All</td><td>Dynamic island must be present: 126x36, top 12px</td><td class="done">Done</td><td>Was missing on screens 03, 07, 09. Added.</td></tr>
+    <tr><td>19</td><td class="screen">All</td><td>Device frame: 402x874, padding 8px, screen radius 40px</td><td class="done">Done</td><td>Standardized</td></tr>
+    <tr><td>20</td><td class="screen">All</td><td>Font family must be system-ui (body) + Georgia (display)</td><td class="done">Done</td><td>Verified and fixed across all files</td></tr>
+
+    <!-- ROUND 5: Provider card + AI Connect -->
+    <tr><td>21</td><td class="screen">06</td><td>Provider updated to Heidi Stewart, LCSW (she/her), "Therapist" badge</td><td class="done">Done</td><td>Name, credentials, badge all updated</td></tr>
+    <tr><td>22</td><td class="screen">06</td><td>Add session availability grid (SUN/TUE/WED with time pills)</td><td class="done">Done</td><td>Grid with time slots added per Figma export</td></tr>
+    <tr><td>23</td><td class="screen">06</td><td>Clinical language softened: "Your Check-in Results", "Score: 14 / 21"</td><td class="done">Done</td><td>Removed "GAD-7" and "Anxiety Check-in"</td></tr>
+    <tr><td>24</td><td class="screen">06</td><td>Provider photo: replace gradient placeholder with real image</td><td class="partial">In Progress</td><td>Figma export "therapist card detail.png" shows real photo. Agent working on fix.</td></tr>
+    <tr><td>25</td><td class="screen">06</td><td>Time fixed from 10:24 to 12:15</td><td class="done">Done</td><td></td></tr>
+
+    <!-- ROUND 6: Assessment + detail screens -->
+    <tr><td>26</td><td class="screen">07</td><td>Add floating tab bar (was flat static bar)</td><td class="done">Done</td><td>Replaced with standard floating pill tab bar</td></tr>
+    <tr><td>27</td><td class="screen">07</td><td>Add FAB button (was missing)</td><td class="done">Done</td><td>Added standard 52x52 FAB</td></tr>
+    <tr><td>28</td><td class="screen">07</td><td>Train buttons too small, enlarge</td><td class="done">Done</td><td>Padding 8px 16px, font 13px</td></tr>
+    <tr><td>29</td><td class="screen">07</td><td>Add "Sonder" label to coach card</td><td class="done">Done</td><td>Gold text label added above message</td></tr>
+    <tr><td>30</td><td class="screen">07</td><td>Content cut off at bottom -- fix scroll</td><td class="done">Done</td><td>Bottom padding increased to 120px</td></tr>
+    <tr><td>31</td><td class="screen">08</td><td>Copy: "Daily Resilience check" (was "stress resilience check-in")</td><td class="done">Done</td><td></td></tr>
+    <tr><td>32</td><td class="screen">08</td><td>Device frame + dynamic island dimensions fixed</td><td class="done">Done</td><td></td></tr>
+    <tr><td>33</td><td class="screen">09</td><td>Dynamic island added (was missing)</td><td class="done">Done</td><td></td></tr>
+    <tr><td>34</td><td class="screen">09</td><td>Font family + device frame standardized</td><td class="done">Done</td><td></td></tr>
+
+    <!-- ROUND 7: Final consistency + home screen variants -->
+    <tr><td>35</td><td class="screen">01 vs 05</td><td>Home screen content must match between regular (01) and FAB overlay (05)</td><td class="done">Done</td><td>05 background content synced to match 01: Sonder card, scores, biometric strip</td></tr>
+    <tr><td>36</td><td class="screen">01</td><td>Create 3 home screen layout variants for better visual balance</td><td class="done">Done</td><td>A: Full-screen fill, B: Card-based with breathing room, C: Hero score + minimal</td></tr>
+    <tr><td>37</td><td class="screen">All</td><td>Run triple-agent QA (Visual, Copy, UX) before publishing</td><td class="done">Done</td><td>16 issues caught and fixed in QA pass</td></tr>
+    <tr><td>38</td><td class="screen">--</td><td>Create single-page review gallery (review.html)</td><td class="done">Done</td><td>All 11 screens in scrollable page with sticky nav</td></tr>
+    <tr><td>39</td><td class="screen">--</td><td>Build complete edit audit log</td><td class="done">Done</td><td>This document</td></tr>
+    <tr><td>40</td><td class="screen">--</td><td>Error analysis: why were items missed?</td><td class="done">Done</td><td>See analysis below</td></tr>
+    <tr><td>41</td><td class="screen">10</td><td>Tab bar + FAB standardized</td><td class="done">Done</td><td></td></tr>
+    <tr><td>42</td><td class="screen">03</td><td>Dynamic island added, font fixed</td><td class="done">Done</td><td></td></tr>
+  </tbody>
+</table>
+
+<div class="error-section">
+  <h2>Error Analysis: Why Were Items Missed?</h2>
+
+  <p><strong>Root cause 1: No single source of truth for reference values.</strong> Each screen was built independently, and when changes were made (e.g., FAB size, tab bar spec, dynamic island), they weren't propagated systematically. The fix: a shared CSS file or component library (which the Expo prototype will solve).</p>
+
+  <p><strong>Root cause 2: Figma exports interpreted, not used directly.</strong> Val dropped PNG exports of exact icons and status bar. Instead of embedding the images directly, I recreated them as SVGs -- introducing approximation errors (WiFi arcs, signal bars, tab icons). Val's intent was to use the actual images, not hand-coded reproductions. The fix: always embed the literal asset when provided.</p>
+
+  <p><strong>Root cause 3: Edits applied to some files but not all.</strong> When Val requested changes like "make it 'Good afternoon, Val'", the change was applied to screen 01 but missed on screen 05 (which shows the same home screen). The fix: maintain a mapping of shared content between screens and propagate changes to all instances.</p>
+
+  <p><strong>Root cause 4: QA ran after all edits, not after each edit.</strong> Multiple edit requests were batched and applied, then QA ran once at the end. Errors in earlier edits compounded. The fix: verify each change immediately after applying it.</p>
+
+  <p><strong>Root cause 5: No diff verification against original request.</strong> After completing edits, there was no step to re-read Val's exact words and check each item off. The fix: maintain an explicit checklist (this audit log) and verify each item before declaring done.</p>
+
+  <p><strong>Process improvement implemented this session:</strong> Task-based tracking with parallel agents, explicit audit log, and systematic file-by-file updates rather than ad-hoc edits.</p>
+</div>
+
+</body>
+</html>

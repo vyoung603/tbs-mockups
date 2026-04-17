@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TBS Home Screen</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #e8e8e8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  /* Device Frame */
+  .device {
+    width: 402px;
+    height: 874px;
+    background: #1a1a1a;
+    border-radius: 48px;
+    padding: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    position: relative;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    background: #F5F0E8;
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 24px 0;
+    flex-shrink: 0;
+    background: #F5F0E8;
+  }
+
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Scrollable Content */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 24px 110px 24px;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content::-webkit-scrollbar { display: none; }
+
+  /* Profile avatar -- pinned top-right */
+  .profile-avatar-fixed {
+    position: absolute;
+    top: 62px;
+    right: 24px;
+    z-index: 5;
+  }
+
+  /* 1. Greeting Header */
+  .header {
+    padding: 20px 0 20px 0;
+    flex-shrink: 0;
+  }
+
+  .header-text h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.15;
+    letter-spacing: -0.4px;
+  }
+
+  .header-text .date {
+    font-size: 14px;
+    color: #8a8a8a;
+    margin-top: 5px;
+    font-weight: 400;
+  }
+
+  .profile-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #004455 0%, #46b2b8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .profile-avatar span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1;
+  }
+
+  /* 2. HERO SCORE */
+  .hero-score-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px 0 0;
+    flex-shrink: 0;
+  }
+
+  .hero-score-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    margin-bottom: 16px;
+  }
+
+  .hero-score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(70,178,184,0.06) 0%, rgba(90,138,212,0.06) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 20px rgba(0,68,85,0.06);
+  }
+
+  .hero-score-circle::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    padding: 2px;
+    background: linear-gradient(135deg, #46b2b8 0%, #5A8AD4 50%, #C4A65A 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.2;
+  }
+
+  .hero-score-value {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 68px;
+    font-weight: 700;
+    color: #004455;
+    line-height: 1;
+  }
+
+  /* 3. Domain scores */
+  .domain-scores {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .domain-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    border-radius: 16px;
+    padding: 16px 8px 14px;
+    gap: 6px;
+  }
+
+  .domain-chip.emotional { background: rgba(142,178,255,0.12); }
+  .domain-chip.cognitive { background: rgba(163,184,107,0.12); }
+  .domain-chip.self-control { background: rgba(232,213,163,0.18); }
+
+  .domain-chip .score {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .domain-chip.emotional .score { color: #5A8AD4; }
+  .domain-chip.cognitive .score { color: #7A9A50; }
+  .domain-chip.self-control .score { color: #C4A65A; }
+
+  .domain-chip .name {
+    font-size: 11px;
+    font-weight: 500;
+    color: #888;
+    letter-spacing: 0.1px;
+    white-space: nowrap;
+  }
+
+  .domain-chip .trend {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+
+  .domain-chip .trend.up { color: #5DA06B; }
+  .domain-chip .trend.down { color: #C97C5D; }
+
+  /* 4. Biometric Strip */
+  .biometric-strip {
+    text-align: center;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+  }
+
+  .biometric-strip .stats {
+    font-size: 13px;
+    color: #777;
+    font-weight: 400;
+    letter-spacing: 0.1px;
+  }
+
+  .biometric-strip .source-badge {
+    display: inline-block;
+    font-size: 10px;
+    color: #aaa;
+    background: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.04);
+    border-radius: 8px;
+    padding: 2px 7px;
+    margin-left: 8px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    vertical-align: middle;
+  }
+
+  /* 5. Sonder Insight Card */
+  .sonder-card {
+    background: linear-gradient(155deg, #F5F0E8 0%, #E8EDEB 35%, #dce8e5 65%, #d4e4e1 100%);
+    border-radius: 18px;
+    padding: 18px 20px 16px 20px;
+    border: 1px solid rgba(0,68,85,0.05);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .sonder-card::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(70,178,184,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .sonder-card::after {
+    content: '';
+    position: absolute;
+    bottom: -30px;
+    left: -20px;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(241,215,125,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .sonder-card-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sonder-card-label .sparkle-sm {
+    width: 14px;
+    height: 14px;
+    color: #004455;
+    opacity: 0.7;
+  }
+
+  .sonder-card-label span {
+    font-size: 11px;
+    font-weight: 600;
+    color: #004455;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  .sonder-card .insight-text {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: #2a2a2a;
+    font-weight: 400;
+    letter-spacing: -0.1px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sonder-card .chat-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #004455;
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sonder-card .chat-link svg {
+    width: 14px;
+    height: 14px;
+    stroke: #004455;
+    fill: none;
+    stroke-width: 1.8;
+  }
+
+  /* ========================================
+     TAB BAR
+     ======================================== */
+  .tab-bar {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    height: 72px;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px 20px 32px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    z-index: 20;
+    box-shadow: 0 -1px 0 rgba(0,0,0,0.04), 0 -4px 12px rgba(0,0,0,0.03);
+  }
+
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    width: 64px;
+    cursor: pointer;
+    padding: 6px 0 4px;
+    border-radius: 12px;
+    transition: background 0.15s ease;
+    position: relative;
+  }
+
+  .tab-item.active {
+    background: #f0f0f0;
+  }
+
+  .tab-spacer {
+    width: 60px;
+    flex-shrink: 0;
+  }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    background: #004455;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,68,85,0.35);
+    z-index: 25;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+
+  .fab:hover {
+    transform: translateX(-50%) scale(1.05);
+  }
+
+  .fab svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="screen">
+    <div class="dynamic-island"></div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <img src="status-bar.png" alt="" style="width:100%;height:auto;display:block;">
+    </div>
+
+    <!-- Profile Avatar -- top right corner -->
+    <div class="profile-avatar-fixed profile-avatar">
+      <span>V</span>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+
+      <!-- 1. Greeting -->
+      <div class="header">
+        <div class="header-text">
+          <h1>Good afternoon, Val</h1>
+          <div class="date">Wednesday, April 16</div>
+        </div>
+      </div>
+
+      <!-- 2. Hero Score -->
+      <div class="hero-score-section">
+        <div class="hero-score-label">Overall Resilience</div>
+        <div class="hero-score-circle">
+          <div class="hero-score-value">65</div>
+        </div>
+
+        <!-- 3. Domain Scores -->
+        <div class="domain-scores">
+          <div class="domain-chip emotional">
+            <div class="score">72</div>
+            <div class="name">Emotional</div>
+            <div class="trend up">&#9650; +3</div>
+          </div>
+          <div class="domain-chip cognitive">
+            <div class="score">65</div>
+            <div class="name">Cognitive</div>
+            <div class="trend up">&#9650; +1</div>
+          </div>
+          <div class="domain-chip self-control">
+            <div class="score">58</div>
+            <div class="name">Self-Control</div>
+            <div class="trend down">&#9660; -2</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Biometric Strip -->
+      <div class="biometric-strip">
+        <span class="stats">Sleep: 6h 42m &middot; HRV: 48ms</span>
+        <span class="source-badge">via Apple Watch</span>
+      </div>
+
+      <!-- 5. Sonder Insight Card -->
+      <div class="sonder-card">
+        <div class="sonder-card-label">
+          <svg class="sparkle-sm" viewBox="0 0 16 16" fill="none">
+            <path d="M8 1C8 1 8.86 5.43 10.57 7.14C12.29 8.86 16 8 16 8C16 8 12.29 8.86 10.57 10.57C8.86 12.29 8 16 8 16C8 16 7.14 12.29 5.43 10.57C3.71 8.86 1 8 1 8C1 8 3.71 7.14 5.43 5.43C7.14 3.71 8 1 8 1Z" fill="currentColor"/>
+          </svg>
+          <span>Sonder</span>
+        </div>
+        <div class="insight-text">
+          Your mind's been working hard this week, and sleep is a little low. Self-control dipped a bit, that's normal after a stressful stretch. Your emotional resilience is holding strong.
+        </div>
+        <a href="#" class="chat-link">
+          Chat with Sonder
+          <svg viewBox="0 0 16 16" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- FAB -->
+    <div class="fab">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab-item active"><img src="icon-home.png" alt="Home" style="width:80px;height:auto;opacity:1;"></div>
+      <div class="tab-item"><img src="icon-journey.png" alt="Journey" style="width:80px;height:auto;opacity:0.45;"></div>
+
+      <div class="tab-spacer"></div>
+
+      <div class="tab-item"><img src="icon-explore.png" alt="Explore" style="width:80px;height:auto;opacity:0.45;"></div>
+      <div class="tab-item"><img src="icon-sonder.png" alt="Sonder" style="width:80px;height:auto;opacity:0.45;"></div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

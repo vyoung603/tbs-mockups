@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TBS Home Screen - Variant B (Card-Based with Breathing Room)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #e8e8e8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  /* Device Frame */
+  .device {
+    width: 402px;
+    height: 874px;
+    background: #1a1a1a;
+    border-radius: 48px;
+    padding: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    position: relative;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    background: #F5F0E8;
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 24px 0;
+    flex-shrink: 0;
+    background: #F5F0E8;
+  }
+
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Scrollable Content - GENEROUS SPACING */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px 110px 20px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .content::-webkit-scrollbar { display: none; }
+
+  /* 1. Greeting Header */
+  .header {
+    padding: 20px 0 32px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-text h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.15;
+    letter-spacing: -0.4px;
+  }
+
+  .header-text .date {
+    font-size: 14px;
+    color: #8a8a8a;
+    margin-top: 5px;
+    font-weight: 400;
+  }
+
+  .profile-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #004455 0%, #46b2b8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .profile-avatar span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1;
+  }
+
+  /* CARD SYSTEM - Each section is a white card */
+  .card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  }
+
+  /* 2. Sonder Card */
+  .sonder-card-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .sonder-card-label .sparkle-sm {
+    width: 16px;
+    height: 16px;
+    color: #004455;
+    opacity: 0.7;
+  }
+
+  .sonder-card-label span {
+    font-size: 12px;
+    font-weight: 600;
+    color: #004455;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .card .insight-text {
+    font-size: 15px;
+    line-height: 1.55;
+    color: #2a2a2a;
+    font-weight: 400;
+    letter-spacing: -0.1px;
+  }
+
+  .card .chat-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #004455;
+    text-decoration: none;
+  }
+
+  .card .chat-link svg {
+    width: 14px;
+    height: 14px;
+    stroke: #004455;
+    fill: none;
+    stroke-width: 1.8;
+  }
+
+  /* 3. Score Card - All 3 in a single card row */
+  .scores-card {
+    display: flex;
+    gap: 12px;
+    padding: 18px 16px;
+  }
+
+  .score-chip {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  .score-val {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .score-chip.emotional .score-val { color: #5A8AD4; }
+  .score-chip.cognitive .score-val { color: #7A9A50; }
+  .score-chip.self-control .score-val { color: #C4A65A; }
+
+  .score-name {
+    font-size: 11px;
+    font-weight: 500;
+    color: #777;
+    letter-spacing: 0.1px;
+    text-align: center;
+  }
+
+  .score-trend {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+
+  .score-trend.up { color: #5DA06B; }
+  .score-trend.down { color: #C97C5D; }
+
+  /* 4. Biometric Card */
+  .biometric-card {
+    text-align: center;
+    padding: 16px;
+  }
+
+  .biometric-card .stats {
+    font-size: 13px;
+    color: #888;
+    font-weight: 400;
+    letter-spacing: 0.1px;
+  }
+
+  .biometric-card .source-badge {
+    display: inline-block;
+    font-size: 10px;
+    color: #aaa;
+    background: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.04);
+    border-radius: 8px;
+    padding: 2px 7px;
+    margin-left: 6px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    vertical-align: middle;
+  }
+
+  /* 5. CTA Card */
+  .cta-card {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .cta-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 54px;
+    background: #004455;
+    border: none;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .cta-button::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(241,215,125,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .cta-button span {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.1px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-dot {
+    width: 4px;
+    height: 4px;
+    background: #F1D77D;
+    border-radius: 50%;
+    margin: 0 10px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Activity Card */
+  .activity-header {
+    font-size: 12px;
+    font-weight: 500;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  .activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .activity-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .activity-item:first-child {
+    padding-top: 0;
+  }
+
+  .activity-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .activity-icon.completed { background: #e8f5ec; }
+  .activity-icon.breathing { background: #e3f3f4; }
+
+  .activity-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+  }
+
+  .activity-icon.completed svg { stroke: #3a9a5b; }
+  .activity-icon.breathing svg { stroke: #46b2b8; }
+
+  .activity-info {
+    flex: 1;
+  }
+
+  .activity-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .activity-subtitle {
+    font-size: 12px;
+    color: #888;
+    margin-top: 1px;
+  }
+
+  .activity-time {
+    font-size: 12px;
+    color: #aaa;
+    flex-shrink: 0;
+  }
+
+  /* ========================================
+     TAB BAR -- matches SM Figma exactly
+     ======================================== */
+  .tab-bar {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    height: 72px;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px 20px 32px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    z-index: 20;
+    box-shadow: 0 -1px 0 rgba(0,0,0,0.04), 0 -4px 12px rgba(0,0,0,0.03);
+  }
+
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    width: 64px;
+    cursor: pointer;
+    padding: 6px 0 4px;
+    border-radius: 12px;
+    transition: background 0.15s ease;
+    position: relative;
+  }
+
+  /* Active tab: light gray pill background */
+  .tab-item.active {
+    background: #f0f0f0;
+  }
+
+  /* Spacer for FAB cutout */
+  .tab-spacer {
+    width: 60px;
+    flex-shrink: 0;
+  }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    background: #004455;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,68,85,0.35);
+    z-index: 25;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+
+  .fab:hover {
+    transform: translateX(-50%) scale(1.05);
+  }
+
+  .fab svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="screen">
+    <div class="dynamic-island"></div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <img src="status-bar.png" alt="" style="width:100%;height:auto;display:block;">
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+
+      <!-- 1. Greeting -->
+      <div class="header">
+        <div class="header-text">
+          <h1>Good afternoon, Val</h1>
+          <div class="date">Wednesday, April 16</div>
+        </div>
+        <div class="profile-avatar">
+          <span>V</span>
+        </div>
+      </div>
+
+      <!-- 2. Sonder Insight Card -->
+      <div class="card">
+        <div class="sonder-card-label">
+          <svg class="sparkle-sm" viewBox="0 0 16 16" fill="none">
+            <path d="M8 1C8 1 8.86 5.43 10.57 7.14C12.29 8.86 16 8 16 8C16 8 12.29 8.86 10.57 10.57C8.86 12.29 8 16 8 16C8 16 7.14 12.29 5.43 10.57C3.71 8.86 1 8 1 8C1 8 3.71 7.14 5.43 5.43C7.14 3.71 8 1 8 1Z" fill="currentColor"/>
+          </svg>
+          <span>Sonder</span>
+        </div>
+        <div class="insight-text">
+          Your mind's been working hard this week. Self-control dipped a bit -- that's normal after a stressful stretch. Your emotional resilience is holding strong though.
+        </div>
+        <a href="#" class="chat-link">
+          Chat with Sonder
+          <svg viewBox="0 0 16 16" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+
+      <!-- 3. Score Card (all 3 in one card) -->
+      <div class="card scores-card">
+        <div class="score-chip emotional">
+          <div class="score-val">72</div>
+          <div class="score-name">Emotional</div>
+          <div class="score-trend up">&#9650; +3</div>
+        </div>
+        <div class="score-chip cognitive">
+          <div class="score-val">65</div>
+          <div class="score-name">Cognitive</div>
+          <div class="score-trend up">&#9650; +1</div>
+        </div>
+        <div class="score-chip self-control">
+          <div class="score-val">58</div>
+          <div class="score-name">Self-Control</div>
+          <div class="score-trend down">&#9660; -2</div>
+        </div>
+      </div>
+
+      <!-- 4. Biometric Card -->
+      <div class="card biometric-card">
+        <span class="stats">Sleep: 6h 42m &middot; HRV: 48ms</span>
+        <span class="source-badge">via Apple Watch</span>
+      </div>
+
+      <!-- 5. CTA Card -->
+      <div class="card cta-card">
+        <button class="cta-button">
+          <span>Start Resonant Breathing</span>
+          <div class="cta-dot"></div>
+          <span>4 min</span>
+        </button>
+      </div>
+
+      <!-- Recent Activity Card -->
+      <div class="card">
+        <div class="activity-header">Recent Activity</div>
+        <div class="activity-item">
+          <div class="activity-icon completed">
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div class="activity-info">
+            <div class="activity-title">Daily Resilience</div>
+            <div class="activity-subtitle">Completed today</div>
+          </div>
+          <div class="activity-time">3 min</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon breathing">
+            <svg viewBox="0 0 24 24"><path d="M17.5 12c2.5-1.5 3.5-4 2-6s-4.5-2.5-7 0c-2.5-2.5-5.5-2-7 0s-.5 4.5 2 6L12 19l5.5-7z"/></svg>
+          </div>
+          <div class="activity-info">
+            <div class="activity-title">Resonant Breathing</div>
+            <div class="activity-subtitle">Yesterday</div>
+          </div>
+          <div class="activity-time">4 min</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FAB -->
+    <div class="fab">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab-item active"><img src="icon-home.png" alt="Home" style="width:80px;height:auto;opacity:1;"></div>
+      <div class="tab-item"><img src="icon-journey.png" alt="Journey" style="width:80px;height:auto;opacity:0.45;"></div>
+
+      <div class="tab-spacer"></div>
+
+      <div class="tab-item"><img src="icon-explore.png" alt="Explore" style="width:80px;height:auto;opacity:0.45;"></div>
+      <div class="tab-item"><img src="icon-sonder.png" alt="Sonder" style="width:80px;height:auto;opacity:0.45;"></div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

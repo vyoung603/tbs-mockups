@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TBS Home - Wellness Companion (Variant B)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #e8e8e8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  /* Device Frame */
+  .device {
+    width: 402px;
+    height: 874px;
+    background: #1a1a1a;
+    border-radius: 48px;
+    padding: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    position: relative;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    background: #F5F0E8;
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 28px 0 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #F5F0E8;
+    flex-shrink: 0;
+  }
+
+  .status-time {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: 0.2px;
+  }
+
+  .status-icons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .status-icons svg {
+    width: 18px;
+    height: 18px;
+    fill: #1a1a1a;
+  }
+
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Scrollable Content */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 24px 100px 24px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .content::-webkit-scrollbar { display: none; }
+
+  /* 1. Greeting Header */
+  .header {
+    padding: 8px 0 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .header-text h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.15;
+    letter-spacing: -0.4px;
+  }
+
+  .header-text .date {
+    font-size: 14px;
+    color: #8a8a8a;
+    margin-top: 5px;
+    font-weight: 400;
+  }
+
+  .sonder-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #004455 0%, #46b2b8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .sonder-avatar span {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  /* 2. Sonder Insight Card (HERO) */
+  .sonder-card {
+    background: linear-gradient(160deg, #F5F0E8 0%, #E3EDEC 50%, #d6e8e6 100%);
+    border-radius: 20px;
+    padding: 22px 20px 18px 20px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(0,68,85,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sonder-card::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(70,178,184,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .sonder-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .sonder-mini-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #004455, #46b2b8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .sonder-mini-avatar span {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .sonder-card-header .label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #004455;
+    letter-spacing: 0.2px;
+  }
+
+  .sonder-card .insight-text {
+    font-size: 15px;
+    line-height: 1.55;
+    color: #2a2a2a;
+    font-weight: 400;
+    letter-spacing: -0.1px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sonder-card .talk-link {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #004455;
+    text-decoration: none;
+    opacity: 0.7;
+    letter-spacing: 0.1px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 3. Score Rings */
+  .scores-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 0 8px;
+  }
+
+  .score-ring-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ring-container {
+    width: 65px;
+    height: 65px;
+    position: relative;
+  }
+
+  .ring-container svg {
+    width: 65px;
+    height: 65px;
+    transform: rotate(-90deg);
+  }
+
+  .ring-bg {
+    fill: none;
+    stroke: #e8e4dc;
+    stroke-width: 5;
+  }
+
+  .ring-progress {
+    fill: none;
+    stroke-width: 5;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s ease;
+  }
+
+  .ring-progress.emotional { stroke: #8EB2FF; }
+  .ring-progress.cognitive { stroke: #A3B86B; }
+  .ring-progress.self-control { stroke: #E8D5A3; }
+
+  .ring-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1;
+  }
+
+  .score-ring-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #777;
+    text-align: center;
+    letter-spacing: 0.1px;
+    line-height: 1.3;
+  }
+
+  /* 4. Biometric Context (subtle inline text) */
+  .biometric-inline {
+    text-align: center;
+    margin-bottom: 28px;
+    padding: 0 8px;
+  }
+
+  .biometric-inline .stats {
+    font-size: 13px;
+    color: #888;
+    font-weight: 400;
+    letter-spacing: 0.1px;
+  }
+
+  .biometric-inline .source-tag {
+    font-size: 10.5px;
+    color: #b0b0b0;
+    margin-left: 6px;
+    font-weight: 400;
+  }
+
+  /* 5. Single Action CTA */
+  .cta-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 52px;
+    background: #004455;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-button::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(241,215,125,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .cta-button span {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.1px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-button .cta-dot {
+    width: 5px;
+    height: 5px;
+    background: #F1D77D;
+    border-radius: 50%;
+    margin: 0 10px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 6. Tab Bar */
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 84px;
+    background: #fff;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    padding: 10px 12px 0 12px;
+    border-radius: 0 0 40px 40px;
+    z-index: 20;
+  }
+
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    flex: 1;
+    cursor: pointer;
+  }
+
+  .tab-spacer {
+    width: 56px;
+    flex-shrink: 0;
+  }
+
+  /* 7. FAB */
+  .fab {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    background: #004455;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,68,85,0.35);
+    z-index: 25;
+    cursor: pointer;
+  }
+
+  .fab svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="screen">
+    <div class="dynamic-island"></div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 18 18"><rect x="1" y="12" width="3" height="5" rx="0.5" fill="#1a1a1a"/><rect x="5.5" y="9" width="3" height="8" rx="0.5" fill="#1a1a1a"/><rect x="10" y="5.5" width="3" height="11.5" rx="0.5" fill="#1a1a1a"/><rect x="14.5" y="2" width="3" height="15" rx="0.5" fill="#1a1a1a"/></svg>
+        <svg viewBox="0 0 18 18"><path d="M9 13.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm-4.2-3.3a6 6 0 018.4 0" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M1.8 7.2a10.5 10.5 0 0114.4 0" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 28 14"><rect x="0.5" y="0.5" width="23" height="13" rx="2.5" stroke="#1a1a1a" stroke-width="1" fill="none"/><rect x="2" y="2" width="18" height="10" rx="1" fill="#1a1a1a"/><path d="M25 4.5v5a2 2 0 000-5z" fill="#1a1a1a"/></svg>
+      </div>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+
+      <!-- 1. Greeting -->
+      <div class="header">
+        <div class="header-text">
+          <h1>Hey Val</h1>
+          <div class="date">Wednesday, April 16</div>
+        </div>
+        <div class="sonder-avatar">
+          <span>S</span>
+        </div>
+      </div>
+
+      <!-- 2. Sonder Insight Card (HERO) -->
+      <div class="sonder-card">
+        <div class="sonder-card-header">
+          <div class="sonder-mini-avatar"><span>S</span></div>
+          <span class="label">Sonder</span>
+        </div>
+        <div class="insight-text">
+          Your mind's been working hard this week. Self-control dipped a bit -- that's normal after a stressful stretch. Your emotional resilience is holding strong though.
+        </div>
+        <a href="#" class="talk-link">Talk to Sonder</a>
+      </div>
+
+      <!-- 3. Score Rings -->
+      <div class="scores-row">
+        <!-- Emotional: 72/100 -->
+        <div class="score-ring-group">
+          <div class="ring-container">
+            <svg viewBox="0 0 65 65">
+              <circle class="ring-bg" cx="32.5" cy="32.5" r="27.5"/>
+              <circle class="ring-progress emotional" cx="32.5" cy="32.5" r="27.5"
+                stroke-dasharray="172.79" stroke-dashoffset="48.38"/>
+            </svg>
+            <div class="ring-value">72</div>
+          </div>
+          <div class="score-ring-label">Emotional<br>Resilience</div>
+        </div>
+        <!-- Cognitive: 65/100 -->
+        <div class="score-ring-group">
+          <div class="ring-container">
+            <svg viewBox="0 0 65 65">
+              <circle class="ring-bg" cx="32.5" cy="32.5" r="27.5"/>
+              <circle class="ring-progress cognitive" cx="32.5" cy="32.5" r="27.5"
+                stroke-dasharray="172.79" stroke-dashoffset="60.48"/>
+            </svg>
+            <div class="ring-value">65</div>
+          </div>
+          <div class="score-ring-label">Cognitive<br>Resilience</div>
+        </div>
+        <!-- Self-Control: 58/100 -->
+        <div class="score-ring-group">
+          <div class="ring-container">
+            <svg viewBox="0 0 65 65">
+              <circle class="ring-bg" cx="32.5" cy="32.5" r="27.5"/>
+              <circle class="ring-progress self-control" cx="32.5" cy="32.5" r="27.5"
+                stroke-dasharray="172.79" stroke-dashoffset="72.57"/>
+            </svg>
+            <div class="ring-value">58</div>
+          </div>
+          <div class="score-ring-label">Self-<br>Control</div>
+        </div>
+      </div>
+
+      <!-- 4. Biometric Context (understated) -->
+      <div class="biometric-inline">
+        <span class="stats">Sleep: 6h 42m &middot; HRV: 48ms</span>
+        <span class="source-tag">via Apple Watch</span>
+      </div>
+
+      <!-- 5. Single Action CTA -->
+      <button class="cta-button">
+        <span>Start Resonant Breathing</span>
+        <div class="cta-dot"></div>
+        <span>4 min</span>
+      </button>
+
+    </div>
+
+    <!-- 7. FAB -->
+    <div class="fab">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round"/></svg>
+    </div>
+
+    <!-- 6. Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab-item active"><img src="icon-home.png" alt="Home" style="width:80px;height:auto;opacity:1;"></div>
+      <div class="tab-item"><img src="icon-journey.png" alt="Journey" style="width:80px;height:auto;opacity:0.45;"></div>
+
+      <div class="tab-spacer"></div>
+
+      <div class="tab-item"><img src="icon-explore.png" alt="Explore" style="width:80px;height:auto;opacity:0.45;"></div>
+      <div class="tab-item"><img src="icon-sonder.png" alt="Sonder" style="width:80px;height:auto;opacity:0.45;"></div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
