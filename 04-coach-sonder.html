@@ -468,6 +468,11 @@
     stroke-width: 2;
     stroke-linecap: round;
   }
+
+  @media all {
+    body.in-iframe { background: transparent !important; }
+    body.in-iframe .device { box-shadow: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -649,5 +654,6 @@
   </div>
 </div>
 
+<script>if (window !== window.top) document.body.classList.add('in-iframe');</script>
 </body>
 </html>

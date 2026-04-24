@@ -356,6 +356,11 @@
     background: #d0cdc6;
     border-radius: 2px;
   }
+
+  @media all {
+    body.in-iframe { background: transparent !important; }
+    body.in-iframe .device { box-shadow: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -505,5 +510,6 @@
   </div>
 </div>
 
+<script>if (window !== window.top) document.body.classList.add('in-iframe');</script>
 </body>
 </html>
