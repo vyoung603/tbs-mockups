@@ -391,7 +391,7 @@
   }
 
   @media all {
-    body.in-iframe { background: transparent !important; }
+    html.in-iframe, body.in-iframe { background: transparent !important; }
     body.in-iframe .device { box-shadow: none !important; }
   }
 </style>
@@ -522,6 +522,6 @@
   </div>
 </div>
 
-<script>if (window !== window.top) document.body.classList.add('in-iframe');</script>
+<script>if (window !== window.top) { document.documentElement.classList.add('in-iframe'); document.body.classList.add('in-iframe'); }</script>
 </body>
 </html>
